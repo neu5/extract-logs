@@ -1,14 +1,18 @@
 import { defineConfig } from "vite";
+import path from "path";
 
 export default defineConfig({
-  root: "src", // Set the root to the src directory
-  server: {
-    port: 3000,
-  },
+  root: path.resolve(__dirname, "src"),
   build: {
-    outDir: "../dist", // Output directory outside of src
-    rollupOptions: {
-      input: "src/index.html", // Entry point for the build
+    outDir: path.resolve(__dirname, "dist"),
+  },
+  server: {
+    open: true,
+  },
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "src"),
     },
   },
+  publicDir: path.resolve(__dirname, "public"),
 });

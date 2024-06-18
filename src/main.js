@@ -79,11 +79,6 @@ async function initCharts() {
     "logData3.json",
     "logData4.json",
     "logData5.json",
-    "logData6.json",
-    "logData7.json",
-    "logData8.json",
-    "logData9.json",
-    "logData10.json",
   ];
 
   const container = document.querySelector(".container");
@@ -95,8 +90,6 @@ async function initCharts() {
     const canvas = document.createElement("canvas");
     canvas.classList.add("chart-canvas"); // Add a class for easier CSS targeting
     canvas.id = `chart-${fileName}`;
-    canvas.width = 250; // Set fixed width for better layout
-    canvas.height = 250; // Set fixed height for better layout
     container.appendChild(canvas);
 
     createChart(canvas.id, logData);

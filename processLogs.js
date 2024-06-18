@@ -1,69 +1,53 @@
-import { readFile, writeFile, readdir } from "fs/promises";
+import fs from "fs";
 import path from "path";
 
-async function processLogFile(logFilePath, outputFilePath) {
-  const logData = await readFile(logFilePath, "utf-8");
-  const logLines = logData.split("\n");
-  const phaseDurations = [];
+// Define the directory where the log files are located
+const logDir = path.join("public", "logData");
+
+// Function to process a single log file and extract necessary data
+function processLogFile(logFile) {
+  const logContent = fs.readFileSync(path.join(logDir, logFile), "utf-8");
+  const logLines = logContent.split("\n");
+
+  const logData = [];
+  let startTime = null;
+  let phaseName = "";
 
   logLines.forEach((line) => {
-    const logStartMatch = line.match(/^\[(.*?)\]\s+LOG_START:\s+(.*)$/);
-    const logEndMatch = line.match(/^\[(.*?)\]\s+LOG_END:\s+(.*)$/);
+    const logStartMatch = line.match(/\[(.*?)\] LOG_START: (.*)/);
+    const logEndMatch = line.match(/\[(.*?)\] LOG_END: (.*)/);
 
     if (logStartMatch) {
-      const startTime = new Date(logStartMatch[1]);
-      const phase = logStartMatch[2];
-      phaseDurations.push({ phase, startTime });
-    }
-
-    if (logEndMatch) {
+      startTime = new Date(logStartMatch[1]);
+      phaseName = logStartMatch[2];
+    } else if (logEndMatch && phaseName) {
       const endTime = new Date(logEndMatch[1]);
-      const phase = logEndMatch[2];
-      const phaseDuration = phaseDurations.find(
-        (p) => p.phase === phase && !p.endTime
-      );
-      if (phaseDuration) {
-        phaseDuration.endTime = endTime;
-        phaseDuration.duration =
-          (endTime - phaseDuration.startTime) / (1000 * 60); // Convert to minutes
-      }
+      const duration = (endTime - startTime) / (1000 * 60); // Duration in minutes
+
+      logData.push({
+        phase: phaseName,
+        duration: duration,
+      });
+
+      // Reset for the next phase
+      startTime = null;
+      phaseName = "";
     }
   });
 
-  const completedPhases = phaseDurations
-    .filter((p) => p.endTime)
-    .map((p) => ({
-      phase: p.phase,
-      duration: p.duration,
-    }));
-
-  await writeFile(outputFilePath, JSON.stringify(completedPhases, null, 2));
+  return logData;
 }
 
-async function processAllLogs() {
-  const logDir = path.resolve("logs"); // Directory containing log files
-  const outputDir = path.resolve("public", "logData"); // Directory to output JSON files
+// Process each log file and save the results as JSON files
+const logFiles = fs.readdirSync(logDir).filter((file) => file.endsWith(".txt"));
 
-  // Ensure output directory exists
-  await writeFile(outputDir, "", { flag: "a" }).catch(() => {});
-
-  const files = await readdir(logDir);
-  const logFiles = files.filter((file) => file.endsWith(".txt"));
-
-  await Promise.all(
-    logFiles.map((file) => {
-      const logFilePath = path.join(logDir, file);
-      const outputFilePath = path.join(
-        outputDir,
-        `${path.parse(file).name}.json`
-      );
-      return processLogFile(logFilePath, outputFilePath);
-    })
+logFiles.forEach((logFile) => {
+  const logData = processLogFile(logFile);
+  const jsonFileName = logFile.replace(".txt", ".json");
+  fs.writeFileSync(
+    path.join(logDir, jsonFileName),
+    JSON.stringify(logData, null, 2)
   );
+});
 
-  console.log("All log data processed successfully");
-}
-
-processAllLogs().catch((err) =>
-  console.error("Error processing log data:", err)
-);
+console.log("Log data processed successfully.");
