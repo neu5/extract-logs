@@ -66,6 +66,7 @@ function createChart(chartId, logData) {
             font: {
               size: 10,
             },
+            padding: 5,
           },
         },
         tooltip: {
@@ -78,8 +79,10 @@ function createChart(chartId, logData) {
       },
       layout: {
         padding: {
-          top: 10,
-          bottom: 10,
+          top: 5,
+          bottom: 5,
+          left: 5,
+          right: 5, // Add padding to the right
         },
       },
     },

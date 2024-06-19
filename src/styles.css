@@ -22,16 +22,6 @@ h1 {
   max-width: 1200px;
 }
 
-canvas {
-  background: #f9f9f9;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 10px;
-  max-width: 250px;
-  max-height: 400px;
-}
-
 .chart-container {
   display: inline-block;
   margin-right: 20px;
@@ -45,9 +35,21 @@ canvas {
   font-weight: bold;
 }
 
-.chart-canvas {
+canvas {
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 5px;
   max-width: 250px;
   max-height: 400px;
+  width: 100%; /* Ensure it scales down properly */
+  height: auto; /* Ensure it scales down properly */
+}
+
+.chart-canvas {
+  max-width: 250px;
+  max-height: 250px;
   width: 100%; /* Ensure it scales down properly */
   height: 100%; /* Ensure it scales down properly */
 }
