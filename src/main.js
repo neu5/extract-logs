@@ -58,9 +58,15 @@ function createChart(chartId, logData) {
     },
     options: {
       responsive: true,
+      maintainAspectRatio: false,
       plugins: {
         legend: {
-          position: "top",
+          position: "bottom",
+          labels: {
+            font: {
+              size: 10,
+            },
+          },
         },
         tooltip: {
           callbacks: {
@@ -68,6 +74,12 @@ function createChart(chartId, logData) {
               return `${context.label}: ${context.raw.toFixed(2)} minutes`;
             },
           },
+        },
+      },
+      layout: {
+        padding: {
+          top: 10,
+          bottom: 10,
         },
       },
     },

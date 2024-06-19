@@ -29,16 +29,25 @@ canvas {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 10px;
   max-width: 250px;
-  max-height: 250px;
+  max-height: 400px;
 }
 
 .chart-container {
   display: inline-block;
   margin-right: 20px;
+  vertical-align: top;
+  text-align: center; /* Center align text within the container */
 }
 
 .chart-sum {
   margin-top: 10px;
   font-size: 14px;
   font-weight: bold;
+}
+
+.chart-canvas {
+  max-width: 250px;
+  max-height: 400px;
+  width: 100%; /* Ensure it scales down properly */
+  height: 100%; /* Ensure it scales down properly */
 }

@@ -1,34 +1,34 @@
 [
   {
-    "phase": "phase 1",
+    "phase": "instalowanie zależności node",
     "duration": 15
   },
   {
-    "phase": "phase 2",
+    "phase": "instalowanie zależności node",
     "duration": 14
   },
   {
-    "phase": "phase 3",
+    "phase": "instalowanie zależności node",
     "duration": 14
   },
   {
-    "phase": "phase 4",
+    "phase": "instalowanie zależności node",
     "duration": 14
   },
   {
-    "phase": "phase 5",
+    "phase": "instalowanie zależności node",
     "duration": 14
   },
   {
-    "phase": "phase 6",
+    "phase": "instalowanie zależności node",
     "duration": 14
   },
   {
-    "phase": "phase 7",
+    "phase": "instalowanie zależności node",
     "duration": 14
   },
   {
-    "phase": "phase 8",
+    "phase": "instalowanie zależności node",
     "duration": 14
   }
 ]
