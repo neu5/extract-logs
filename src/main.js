@@ -16,6 +16,9 @@ function createChart(chartId, logData) {
   const labels = logData.map((entry) => entry.phase);
   const data = logData.map((entry) => entry.duration);
 
+  // Calculate sum of durations
+  const sum = data.reduce((acc, curr) => acc + curr, 0);
+
   // Create the pie chart
   const ctx = document.getElementById(chartId).getContext("2d");
   new Chart(ctx, {
@@ -69,6 +72,15 @@ function createChart(chartId, logData) {
       },
     },
   });
+
+  // Display sum of durations next to the chart
+  const chartContainer = document
+    .getElementById(chartId)
+    .closest(".chart-container");
+  const sumElement = document.createElement("div");
+  sumElement.classList.add("chart-sum");
+  sumElement.textContent = `Total: ${sum.toFixed(2)} minutes`;
+  chartContainer.appendChild(sumElement);
 }
 
 // Function to initialize charts
@@ -86,11 +98,16 @@ async function initCharts() {
   for (const fileName of logFiles) {
     const logData = await fetchLogData(fileName);
 
+    // Create a new container for each chart
+    const chartContainer = document.createElement("div");
+    chartContainer.classList.add("chart-container");
+    container.appendChild(chartContainer);
+
     // Create a new canvas element for each chart
     const canvas = document.createElement("canvas");
     canvas.classList.add("chart-canvas"); // Add a class for easier CSS targeting
     canvas.id = `chart-${fileName}`;
-    container.appendChild(canvas);
+    chartContainer.appendChild(canvas);
 
     createChart(canvas.id, logData);
   }

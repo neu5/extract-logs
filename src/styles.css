@@ -31,3 +31,14 @@ canvas {
   max-width: 250px;
   max-height: 250px;
 }
+
+.chart-container {
+  display: inline-block;
+  margin-right: 20px;
+}
+
+.chart-sum {
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: bold;
+}
