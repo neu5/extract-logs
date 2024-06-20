@@ -12,7 +12,7 @@ async function fetchLogData(fileName) {
 }
 
 // Function to create a chart
-function createChart(chartId, logData) {
+function createChart(chartId, logData, fileName) {
   const labels = logData.map((entry) => entry.phase);
   const data = logData.map((entry) => entry.duration);
 
@@ -76,13 +76,17 @@ function createChart(chartId, logData) {
             },
           },
         },
+        title: {
+          display: true,
+          text: fileName, // Set the title to the file name
+        },
       },
       layout: {
         padding: {
           top: 5,
           bottom: 5,
           left: 5,
-          right: 5, // Add padding to the right
+          right: 5,
         },
       },
     },
@@ -124,7 +128,7 @@ async function initCharts() {
     canvas.id = `chart-${fileName}`;
     chartContainer.appendChild(canvas);
 
-    createChart(canvas.id, logData);
+    createChart(canvas.id, logData, fileName);
   }
 }
 
