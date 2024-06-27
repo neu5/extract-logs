@@ -13,8 +13,8 @@ async function fetchLogData(fileName) {
 
 // Function to create a chart
 function createChart(chartId, logData, fileName) {
-  const labels = logData.map((entry) => entry.phase);
-  const data = logData.map((entry) => entry.duration);
+  const labels = logData.phases.map((entry) => entry.phase);
+  const data = logData.phases.map((entry) => entry.duration);
 
   // Calculate sum of durations
   const sum = data.reduce((acc, curr) => acc + curr, 0);
@@ -100,16 +100,24 @@ function createChart(chartId, logData, fileName) {
   sumElement.classList.add("chart-sum");
   sumElement.textContent = `Total: ${sum.toFixed(2)} minutes`;
   chartContainer.appendChild(sumElement);
+
+  // Display total build duration next to the chart
+  const totalBuildDurationElement = document.createElement("div");
+  totalBuildDurationElement.classList.add("chart-sum");
+  totalBuildDurationElement.textContent = `Build Duration: ${logData.totalBuildDuration.toFixed(
+    2
+  )} minutes`;
+  chartContainer.appendChild(totalBuildDurationElement);
 }
 
 // Function to initialize charts
 async function initCharts() {
   const logFiles = [
-    "logData1.json",
     "logData2.json",
     "logData3.json",
     "logData4.json",
     "logData5.json",
+    "mkmk.json",
   ];
 
   const container = document.querySelector(".container");

@@ -6,7 +6,19 @@ async function processLogFile(logFilePath, outputFilePath) {
   const logLines = logData.split("\n");
   const phaseDurations = [];
 
+  let firstTimestamp = null;
+  let lastTimestamp = null;
+
   logLines.forEach((line) => {
+    const timestampMatch = line.match(/^\[(.*?)\]/);
+    if (timestampMatch) {
+      const timestamp = new Date(timestampMatch[1]);
+      if (!firstTimestamp) {
+        firstTimestamp = timestamp;
+      }
+      lastTimestamp = timestamp;
+    }
+
     const logStartMatch = line.match(/^\[(.*?)\]\s+LOG_START:\s+(.*)$/);
     const logEndMatch = line.match(/^\[(.*?)\]\s+LOG_END:\s+(.*)$/);
 
@@ -37,7 +49,18 @@ async function processLogFile(logFilePath, outputFilePath) {
       duration: p.duration,
     }));
 
-  await writeFile(outputFilePath, JSON.stringify(completedPhases, null, 2));
+  let totalBuildDuration = null;
+  if (firstTimestamp && lastTimestamp) {
+    totalBuildDuration = (lastTimestamp - firstTimestamp) / (1000 * 60); // Convert to minutes
+  }
+
+  const outputData = {
+    phases: completedPhases,
+    totalBuildDuration:
+      totalBuildDuration !== null ? totalBuildDuration : "N/A",
+  };
+
+  await writeFile(outputFilePath, JSON.stringify(outputData, null, 2));
 }
 
 async function processAllLogs() {
