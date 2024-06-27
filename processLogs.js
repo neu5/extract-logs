@@ -1,4 +1,4 @@
-import { readFile, writeFile, readdir } from "fs/promises";
+import { readFile, writeFile, readdir, mkdir } from "fs/promises";
 import path from "path";
 
 async function processLogFile(logFilePath, outputFilePath) {
@@ -10,7 +10,9 @@ async function processLogFile(logFilePath, outputFilePath) {
   let lastTimestamp = null;
 
   logLines.forEach((line) => {
-    const timestampMatch = line.match(/^\[(.*?)\]/);
+    const timestampMatch = line.match(
+      /\[(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z)\]/
+    );
     if (timestampMatch) {
       const timestamp = new Date(timestampMatch[1]);
       if (!firstTimestamp) {
@@ -68,7 +70,7 @@ async function processAllLogs() {
   const outputDir = path.resolve("public", "logData"); // Directory to output JSON files
 
   // Ensure output directory exists
-  await writeFile(outputDir, "", { flag: "a" }).catch(() => {});
+  await mkdir(outputDir, { recursive: true });
 
   const files = await readdir(logDir);
   const logFiles = files.filter((file) => file.endsWith(".txt"));

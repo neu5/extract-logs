@@ -78,7 +78,7 @@ function createChart(chartId, logData, fileName) {
         },
         title: {
           display: true,
-          text: fileName, // Set the title to the file name
+          text: fileName.replace(".json", ""), // Set the title to the file name without extension
         },
       },
       layout: {
