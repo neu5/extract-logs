@@ -17,7 +17,6 @@ const BG_COLORS = [
   "rgba(255, 159, 127, 0.2)",
 ];
 
-// Function to fetch log data from a JSON file
 async function fetchLogData(fileName) {
   const response = await fetch(`/logData/${fileName}`);
   if (!response.ok) {
@@ -27,16 +26,12 @@ async function fetchLogData(fileName) {
   return data;
 }
 
-// Function to create a chart
 function createChart(chartId, logData, chartTitle) {
   const phases = logData.phases;
   const labels = phases.map((entry) => entry.phase);
   const data = phases.map((entry) => entry.duration);
-
-  // Calculate sum of durations
   const sum = data.reduce((acc, curr) => acc + curr, 0);
 
-  // Create the pie chart
   const ctx = document.getElementById(chartId).getContext("2d");
   new Chart(ctx, {
     type: "pie",
@@ -46,18 +41,7 @@ function createChart(chartId, logData, chartTitle) {
         {
           data: data,
           backgroundColor: BG_COLORS,
-          borderColor: [
-            "rgba(255, 99, 132, 1)",
-            "rgba(54, 162, 235, 1)",
-            "rgba(255, 206, 86, 1)",
-            "rgba(75, 192, 192, 1)",
-            "rgba(153, 102, 255, 1)",
-            "rgba(255, 159, 64, 1)",
-            "rgba(199, 199, 199, 1)",
-            "rgba(83, 102, 255, 1)",
-            "rgba(34, 202, 236, 1)",
-            "rgba(255, 159, 127, 1)",
-          ],
+          borderColor: BG_COLORS.map((color) => color.replace("0.2", "1")),
           borderWidth: 1,
         },
       ],
@@ -79,7 +63,7 @@ function createChart(chartId, logData, chartTitle) {
         datalabels: {
           anchor: "end",
           align: "end",
-          formatter: (value, context) => {
+          formatter: (value) => {
             const percentage = ((value / sum) * 100).toFixed(2);
             return `${percentage}%`;
           },
@@ -88,9 +72,8 @@ function createChart(chartId, logData, chartTitle) {
             weight: "bold",
           },
           color: "black",
-          backgroundColor: function (context) {
-            return context.dataset.backgroundColor[context.dataIndex];
-          },
+          backgroundColor: (context) =>
+            context.dataset.backgroundColor[context.dataIndex],
           borderRadius: 4,
           borderWidth: 1,
           padding: 6,
@@ -108,12 +91,10 @@ function createChart(chartId, logData, chartTitle) {
     plugins: [ChartDataLabels],
   });
 
-  // Display sum of durations next to the chart
   const chartContainer = document
     .getElementById(chartId)
     .closest(".chart-container");
 
-  // Add the chart title
   const titleElement = document.createElement("div");
   titleElement.classList.add("chart-title");
   titleElement.textContent = chartTitle;
@@ -139,13 +120,12 @@ function createChart(chartId, logData, chartTitle) {
 
   const totalBuildDurationElement = document.createElement("div");
   totalBuildDurationElement.classList.add("chart-sum");
-  totalBuildDurationElement.textContent = `Build Duration: ${logData.totalBuildDuration.toFixed(
+  totalBuildDurationElement.textContent = `Build duration: ${logData.totalBuildDuration.toFixed(
     2
   )} minutes`;
   chartContainer.appendChild(totalBuildDurationElement);
 }
 
-// Function to initialize charts
 async function initCharts() {
   const logFiles = [
     "logData2.json",
@@ -160,14 +140,12 @@ async function initCharts() {
   for (const fileName of logFiles) {
     const logData = await fetchLogData(fileName);
 
-    // Create a new container for each chart
     const chartContainer = document.createElement("div");
     chartContainer.classList.add("chart-container");
     container.appendChild(chartContainer);
 
-    // Create a new canvas element for each chart
     const canvas = document.createElement("canvas");
-    canvas.classList.add("chart-canvas"); // Add a class for easier CSS targeting
+    canvas.classList.add("chart-canvas");
     canvas.id = `chart-${fileName}`;
     chartContainer.appendChild(canvas);
 
@@ -175,5 +153,4 @@ async function initCharts() {
   }
 }
 
-// Call the function to initialize charts
 initCharts();
