@@ -104,7 +104,9 @@ function createChart(chartId, logData, chartTitle) {
   const fragment = new DocumentFragment();
   for (let i = 0; i < logData.phases.length; i++) {
     const li = document.createElement("li");
-    li.textContent = logData.phases[i].phase;
+    li.textContent = `${logData.phases[i].phase} (${logData.phases[
+      i
+    ].duration.toFixed(2)})`;
     li.style.backgroundColor = BG_COLORS[i];
     fragment.append(li);
   }
