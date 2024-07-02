@@ -1,5 +1,21 @@
 import Chart from "chart.js/auto";
+import ChartDataLabels from "chartjs-plugin-datalabels";
 import "./styles.css";
+
+Chart.register(ChartDataLabels);
+
+const BG_COLORS = [
+  "rgba(255, 99, 132, 0.2)",
+  "rgba(54, 162, 235, 0.2)",
+  "rgba(255, 206, 86, 0.2)",
+  "rgba(75, 192, 192, 0.2)",
+  "rgba(153, 102, 255, 0.2)",
+  "rgba(255, 159, 64, 0.2)",
+  "rgba(199, 199, 199, 0.2)",
+  "rgba(83, 102, 255, 0.2)",
+  "rgba(34, 202, 236, 0.2)",
+  "rgba(255, 159, 127, 0.2)",
+];
 
 // Function to fetch log data from a JSON file
 async function fetchLogData(fileName) {
@@ -12,9 +28,10 @@ async function fetchLogData(fileName) {
 }
 
 // Function to create a chart
-function createChart(chartId, logData, fileName) {
-  const labels = logData.phases.map((entry) => entry.phase);
-  const data = logData.phases.map((entry) => entry.duration);
+function createChart(chartId, logData, chartTitle) {
+  const phases = logData.phases;
+  const labels = phases.map((entry) => entry.phase);
+  const data = phases.map((entry) => entry.duration);
 
   // Calculate sum of durations
   const sum = data.reduce((acc, curr) => acc + curr, 0);
@@ -28,18 +45,7 @@ function createChart(chartId, logData, fileName) {
       datasets: [
         {
           data: data,
-          backgroundColor: [
-            "rgba(255, 99, 132, 0.2)",
-            "rgba(54, 162, 235, 0.2)",
-            "rgba(255, 206, 86, 0.2)",
-            "rgba(75, 192, 192, 0.2)",
-            "rgba(153, 102, 255, 0.2)",
-            "rgba(255, 159, 64, 0.2)",
-            "rgba(199, 199, 199, 0.2)",
-            "rgba(83, 102, 255, 0.2)",
-            "rgba(34, 202, 236, 0.2)",
-            "rgba(255, 159, 127, 0.2)",
-          ],
+          backgroundColor: BG_COLORS,
           borderColor: [
             "rgba(255, 99, 132, 1)",
             "rgba(54, 162, 235, 1)",
@@ -61,13 +67,7 @@ function createChart(chartId, logData, fileName) {
       maintainAspectRatio: false,
       plugins: {
         legend: {
-          position: "bottom",
-          labels: {
-            font: {
-              size: 10,
-            },
-            padding: 5,
-          },
+          display: false,
         },
         tooltip: {
           callbacks: {
@@ -76,32 +76,67 @@ function createChart(chartId, logData, fileName) {
             },
           },
         },
-        title: {
-          display: true,
-          text: fileName.replace(".json", ""), // Set the title to the file name without extension
+        datalabels: {
+          anchor: "end",
+          align: "end",
+          formatter: (value, context) => {
+            const percentage = ((value / sum) * 100).toFixed(2);
+            return `${percentage}%`;
+          },
+          font: {
+            size: 10,
+            weight: "bold",
+          },
+          color: "black",
+          backgroundColor: function (context) {
+            return context.dataset.backgroundColor[context.dataIndex];
+          },
+          borderRadius: 4,
+          borderWidth: 1,
+          padding: 6,
         },
       },
       layout: {
         padding: {
-          top: 5,
-          bottom: 5,
-          left: 5,
-          right: 5,
+          top: 0,
+          bottom: 0,
+          left: 40,
+          right: 40,
         },
       },
     },
+    plugins: [ChartDataLabels],
   });
 
   // Display sum of durations next to the chart
   const chartContainer = document
     .getElementById(chartId)
     .closest(".chart-container");
+
+  // Add the chart title
+  const titleElement = document.createElement("div");
+  titleElement.classList.add("chart-title");
+  titleElement.textContent = chartTitle;
+  chartContainer.insertBefore(titleElement, chartContainer.firstChild);
+
+  const labelsElement = document.createElement("ul");
+  const fragment = new DocumentFragment();
+  for (let i = 0; i < logData.phases.length; i++) {
+    const li = document.createElement("li");
+    li.textContent = logData.phases[i].phase;
+    li.style.backgroundColor = BG_COLORS[i];
+    fragment.append(li);
+  }
+
+  labelsElement.append(fragment);
+  labelsElement.classList.add("chart-labels");
+  chartContainer.append(labelsElement);
+
   const sumElement = document.createElement("div");
   sumElement.classList.add("chart-sum");
   sumElement.textContent = `Total: ${sum.toFixed(2)} minutes`;
   chartContainer.appendChild(sumElement);
 
-  // Display total build duration next to the chart
   const totalBuildDurationElement = document.createElement("div");
   totalBuildDurationElement.classList.add("chart-sum");
   totalBuildDurationElement.textContent = `Build Duration: ${logData.totalBuildDuration.toFixed(

@@ -29,12 +29,6 @@ h1 {
   text-align: center; /* Center align text within the container */
 }
 
-.chart-sum {
-  margin-top: 10px;
-  font-size: 14px;
-  font-weight: bold;
-}
-
 canvas {
   background: #f9f9f9;
   border: 1px solid #ddd;
@@ -49,7 +43,32 @@ canvas {
 
 .chart-canvas {
   max-width: 250px;
-  max-height: 250px;
+  max-height: 200px;
   width: 100%; /* Ensure it scales down properly */
   height: 100%; /* Ensure it scales down properly */
+}
+
+.chart-title {
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.chart-sum {
+  font-size: 12px;
+  font-weight: bold;
+  margin-top: 4px;
+  text-align: center;
+}
+
+.chart-labels {
+  list-style: none;
+  font-size: 10px;
+  padding-left: 0;
+}
+
+.chart-labels li {
+  margin: 2px 0;
+  padding: 2px 0;
 }
